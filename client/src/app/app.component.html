@@ -1,0 +1,12 @@
+<h1>Hello {{ title }}</h1>
+
+<ul>
+  <!-- <li *ngFor="let user of users">
+    {{user.id}} - {{user.userName}}
+  </li> -->
+  @for (user of users; track $index) {
+    <li>
+      {{user.id}} - {{user.userName}}
+    </li>
+  }
+</ul>
