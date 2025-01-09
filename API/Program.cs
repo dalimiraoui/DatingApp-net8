@@ -1,4 +1,5 @@
 using API.Extensions;
+using API.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,14 @@ builder.Services.AddApplicationIdentity(builder.Configuration);
 builder.Services.AddCors();
 
 var app = builder.Build();
+
+// Custom middleware to handle exceptions globally.
+// It catches unhandled exceptions, logs them, and returns a structured error response in JSON format.
+app.UseMiddleware<ExceptionMiddleware>();
+
+// Built-in middleware used in development mode to provide detailed error pages for unhandled exceptions.
+// This should not be used in production environments for security reasons.
+//app.UseDeveloperExceptionPage();
 
 // configure http request pipilines
 app.UseCors(
