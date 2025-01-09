@@ -1,5 +1,7 @@
+using API.Data;
 using API.Extensions;
 using API.Middleware;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -41,6 +43,41 @@ app.UseCors(
 
 app.UseAuthentication();
 app.UseAuthorization();
+
 app.MapControllers();
 
+// Create a new scope for resolving services with a controlled lifetime.
+// This ensures that any scoped or transient services resolved in this block are properly disposed of when the scope ends.
+using var scope = app.Services.CreateScope();
+
+// Retrieve the scoped service provider to resolve dependencies within the created scope.
+var services = scope.ServiceProvider;
+
+try
+{
+    // Resolve the application's database context (DataContext) from the scoped service provider.
+    // Throws an exception if the service cannot be resolved, ensuring the required service is available.
+    var context = services.GetRequiredService<DataContext>();
+    
+    // Apply any pending EF Core migrations to the database.
+    // This ensures the database schema matches the application's current data model.
+    // Runs asynchronously to avoid blocking the main thread.
+    await context.Database.MigrateAsync();
+    
+    // Seed the database with initial data (e.g., users, roles, or default values).
+    // This is typically used to ensure the application starts with essential data.
+    await Seed.SeedUsers(context);
+}
+catch (Exception ex)
+{
+    // Resolve the logger service for the Program class to log errors.
+    var logger = services.GetRequiredService<ILogger<Program>>();
+    
+    // Log the exception that occurred during database migration or seeding.
+    // Provides helpful information for debugging startup issues.
+    logger.LogError(ex, "An error occurred during migration");
+}
+
+// Start the web application and begin listening for incoming HTTP requests.
 app.Run();
+

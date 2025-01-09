@@ -1,33 +1,28 @@
-using System;
-using API.Data;
-using API.Entities;
+using API.DTOs;
 using API.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SQLitePCL;
 
 namespace API.Controllers;
 
-public class UsersController(DataContext context) : BaseApiController
+[Authorize]
+public class UsersController(IUserRepository userRepository, IMapper mapper) : BaseApiController
 {
-    private DataContext _context = context;
     
-    [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<AppUser>>> getAllUsers()
+    public async Task<ActionResult<IEnumerable<MemeberDTO>>> getAllUsers()
     {
-        var users= await _context.Users.ToListAsync();
-        return users;
+        var users= await userRepository.GetMembersAsync();
+        return Ok(users);
     }
     
     [Authorize]
-    [HttpGet("{id}")]
-    public async Task<ActionResult<AppUser>> getUserById(int id)
+    [HttpGet("{username}")]
+    public async Task<ActionResult<MemeberDTO>> getUserById(string  username)
     {
-        var user= await _context.Users.FindAsync(id);
-        if (user == null) return  NotFound("User with id :"+id+" not found");
-        return user;
+        var user= await userRepository.GetMemberAsync(username);
+        if (user == null) return  NotFound("User with username :"+username+" not found");
+        return Ok(user);
     }
 }

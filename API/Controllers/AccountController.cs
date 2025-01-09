@@ -9,6 +9,7 @@ using API.Entities;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using API.Interfaces;
+using System.Threading.Tasks.Dataflow;
 
 namespace API.Controllers;
 
@@ -18,19 +19,20 @@ public class AccountController(DataContext context, ITokenService tokenService) 
     public async Task<ActionResult<UserDTO>> RegisterUser( RegisterDTO registerDto)
     {
         if (await IsUserNameExists(registerDto.UserName)) return BadRequest("UserName is taken");
-        using var hmac = new HMACSHA512();
-        var user = new AppUser{
-            UserName = registerDto.UserName,
-            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password.ToLower())),
-            PasswordSalt = hmac.Key
-        };
+        return Ok();
+        // using var hmac = new HMACSHA512();
+        // var user = new AppUser{
+        //     UserName = registerDto.UserName,
+        //     PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password.ToLower())),
+        //     PasswordSalt = hmac.Key
+        // };
 
-        context.Users.Add(user);
-        await context.SaveChangesAsync();
-        return new UserDTO {
-            Username = user.UserName,
-            Token = tokenService.CreateToken(user)
-        };
+        // context.Users.Add(user);
+        // await context.SaveChangesAsync();
+        // return new UserDTO {
+        //     Username = user.UserName,
+        //     Token = tokenService.CreateToken(user)
+        // };
 
     }
 
@@ -43,11 +45,11 @@ public class AccountController(DataContext context, ITokenService tokenService) 
         using var hmac = new HMACSHA512(user.PasswordSalt);
         var computeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password.ToLower()));
 
-        for (int i = 0; i < computeHash.Length; i++)
-        {
-            if (computeHash[i] != user.PasswordHash[i])  return Unauthorized("Invalid Password User");
+        // for (int i = 0; i < computeHash.Length; i++)
+        // {
+        //     if (computeHash[i] != user.PasswordHash[i])  return Unauthorized("Invalid Password User");
             
-        }
+        // }
         return new UserDTO {
             Username = user.UserName,
             Token = tokenService.CreateToken(user)
