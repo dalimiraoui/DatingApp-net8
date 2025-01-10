@@ -1,0 +1,42 @@
+/* Styles for when the card is hovered */
+.card:hover img {
+    transform: scale(1.2, 1.2); /* Scales the image to 1.2 times its original size on hover */
+    transition-duration: 500ms; /* Sets the transition duration to 500 milliseconds */
+    transition-timing-function: ease-out; /* Smooth transition with ease-out effect */
+    opacity: 0.7; /* Reduces the image opacity to 70% on hover */
+}
+
+/* Default styles for images inside a card */
+.card img {
+    transform: scale(1.0, 1.0); /* Ensures the image is at its original scale by default */
+    transition-duration: 500ms; /* Sets the same transition duration as hover for consistency */
+    transition-timing-function: ease-out; /* Smooth transition for any transformation */
+}
+
+/* Wrapper styles for the card image */
+.card-img-wrapper {
+    overflow: hidden; /* Ensures that content outside the wrapper's bounds is hidden */
+    position: relative; /* Makes the wrapper a reference point for absolutely positioned children */
+}
+
+/* Styles for the member-icons element */
+.member-icons {
+    position: absolute; /* Positions the icons relative to the card-img-wrapper */
+    bottom: -30%; /* Starts the icons 30% below the bottom of the wrapper */
+    left: 0; /* Aligns the icons to the left edge */
+    right: 0; /* Aligns the icons to the right edge */
+    margin-right: auto; /* Centers the icons horizontally */
+    margin-left: auto; /* Centers the icons horizontally */
+    opacity: 0; /* Hides the icons by default */
+}
+
+/* Styles for when the card-img-wrapper is hovered */
+.card-img-wrapper:hover .member-icons {
+    bottom: 0; /* Moves the icons to the bottom edge of the wrapper */
+    opacity: 1; /* Makes the icons fully visible */
+}
+
+/* Generic animation utility class */
+.animate {
+    transition: all 0.3s ease-in-out; /* Applies a smooth transition effect for all properties */
+}
