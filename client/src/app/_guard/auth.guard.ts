@@ -12,5 +12,4 @@ export const authGuard: CanActivateFn = (route, state) => {
     toaster.error("you shell not pass !!!");
     return false;
   }
-  return true;
 };
