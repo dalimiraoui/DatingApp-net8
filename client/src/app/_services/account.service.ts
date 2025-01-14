@@ -3,6 +3,7 @@ import { inject, Injectable, signal } from '@angular/core';
 import { User } from '../_models/user';
 import { map } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Member } from '../_models/member';
 
 @Injectable({
   providedIn: 'root'
@@ -19,8 +20,7 @@ export class AccountService {
     return this.http.post<User>(this.baseUrl +'account/login', model).pipe(
       map( user => {
         if(user) {
-          localStorage.setItem("currentUser", JSON.stringify(user));
-          this.currentUser.set(user);
+          this.setCurrentUser(user)
         }
       })
     )
@@ -32,12 +32,16 @@ export class AccountService {
         console.log(user);
         
         if(user) {
-          localStorage.setItem("currentUser", JSON.stringify(user));
-          this.currentUser.set(user);
+          this.setCurrentUser(user)
         }
         return user;
       })
     )
+  }
+
+  setCurrentUser(user : User) {
+    localStorage.setItem("currentUser", JSON.stringify(user));
+    this.currentUser.set(user);
   }
 
   logout() {

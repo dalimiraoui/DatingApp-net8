@@ -37,10 +37,13 @@ public class AccountController(DataContext context, ITokenService tokenService) 
     }
 
     [HttpPost("login")]
-    public async Task<ActionResult<UserDTO>> loginUser( LoginDTO loginDto)
+    public async Task<ActionResult<UserDTO>> loginUser(LoginDTO loginDto)
     {
-        var user = await context.Users.FirstOrDefaultAsync( x => 
-            x.UserName.ToLower() == loginDto.UserName.ToLower());
+        var user = await context.Users
+           .Include(u => u.Photos)
+           .FirstOrDefaultAsync( x => 
+             x.UserName.ToLower() == loginDto.UserName.ToLower()
+            );
         if (user == null) return Unauthorized("UserName does not exist!");
         using var hmac = new HMACSHA512(user.PasswordSalt);
         var computeHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password.ToLower()));
@@ -52,7 +55,8 @@ public class AccountController(DataContext context, ITokenService tokenService) 
         // }
         return new UserDTO {
             Username = user.UserName,
-            Token = tokenService.CreateToken(user)
+            Token = tokenService.CreateToken(user),
+            PhotoUrl = user.Photos.FirstOrDefault(p => p.IsMain)?.Url
         };
 
     }
