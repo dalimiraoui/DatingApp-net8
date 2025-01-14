@@ -18,6 +18,8 @@ public class AutoMapperProfiles :Profile
 
         CreateMap<MemberUpdateDTO, AppUser>();
         CreateMap<AppUser, MemberUpdateDTO>();
+        CreateMap<RegisterDTO, AppUser>();
+        CreateMap<string, DateOnly>().ConvertUsing(s => DateOnly.Parse(s));
     }
 
 }
