@@ -22,6 +22,7 @@ public static class ApplicationServiceExtentions
         services.AddScoped<ITokenService,TokenService>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IPhotoService, PhotoService>();
+        services.AddScoped<LogUserActivity>();
         // Registers AutoMapper with the application's service container.
         // Scans the current application's assemblies for mapping profiles 
         // (classes that inherit from AutoMapper.Profile) to configure object-to-object mappings automatically.
