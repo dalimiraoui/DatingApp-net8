@@ -17,3 +17,7 @@ To Revert to Specific migration
 
 To Revert to 0
 `dotnet ef database update 0 -c EAssessmentDbContext -s ./EAssessment.WebApi/ -p ./EAssessment.Data/ ; dotnet ef migrations remove -c EAssessmentDbContext -s ./EAssessment.WebApi/ -p ./EAssessment.Data/`
+
+
+
+
