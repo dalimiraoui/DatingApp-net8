@@ -21,6 +21,7 @@ public static class ApplicationServiceExtentions
         // add services life Cycle
         services.AddScoped<ITokenService,TokenService>();
         services.AddScoped<IUserRepository, UserRepository>();
+        services.AddScoped<ILikesRepository, LikesRepository>();
         services.AddScoped<IPhotoService, PhotoService>();
         services.AddScoped<LogUserActivity>();
         // Registers AutoMapper with the application's service container.

@@ -4,6 +4,7 @@ import { User } from '../_models/user';
 import { map } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { Member } from '../_models/member';
+import { LikeService } from './like.service';
 
 @Injectable({
   providedIn: 'root'
@@ -11,6 +12,7 @@ import { Member } from '../_models/member';
 export class AccountService {
 
   http= inject(HttpClient);
+  private likeService= inject(LikeService);
 
   baseUrl = environment.apiUrl;
 
@@ -42,6 +44,7 @@ export class AccountService {
   setCurrentUser(user : User) {
     localStorage.setItem("currentUser", JSON.stringify(user));
     this.currentUser.set(user);
+    this.likeService.getLikeIds()
   }
 
   logout() {
