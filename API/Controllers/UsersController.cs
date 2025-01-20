@@ -38,7 +38,7 @@ public class UsersController(
     [HttpPut]
     public async Task<ActionResult> UpdateUser(MemberUpdateDTO  memberUpdateDTO)
     {
-        var username = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var username = User.GetUsername();
 
         if(username == null) return BadRequest("No username found in token");
         var user = await userRepository.GetUserByUsername(username);
@@ -88,7 +88,7 @@ public class UsersController(
 
         var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
 
-        if (photo.IsMain) return BadRequest("This is already your main photo");
+        if (photo!.IsMain) return BadRequest("This is already your main photo");
 
         var currentMain = user.Photos.FirstOrDefault(x => x.IsMain);
         if (currentMain != null) currentMain.IsMain = false;

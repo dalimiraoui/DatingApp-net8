@@ -1,6 +1,8 @@
 using API.Data;
+using API.Entities;
 using API.Extensions;
 using API.Middleware;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -58,6 +60,8 @@ try
     // Resolve the application's database context (DataContext) from the scoped service provider.
     // Throws an exception if the service cannot be resolved, ensuring the required service is available.
     var context = services.GetRequiredService<DataContext>();
+    var userManager = services.GetRequiredService<UserManager<AppUser>>();
+    var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
     
     // Apply any pending EF Core migrations to the database.
     // This ensures the database schema matches the application's current data model.
@@ -66,7 +70,7 @@ try
     
     // Seed the database with initial data (e.g., users, roles, or default values).
     // This is typically used to ensure the application starts with essential data.
-    await Seed.SeedUsers(context);
+    await Seed.SeedUsers(userManager, roleManager);
 }
 catch (Exception ex)
 {

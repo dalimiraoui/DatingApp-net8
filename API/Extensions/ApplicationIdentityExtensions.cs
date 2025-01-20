@@ -1,6 +1,9 @@
 
 using System.Text;
+using API.Data;
+using API.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Extensions;
@@ -11,6 +14,13 @@ public static class ApplicationIdentityExtensions
     // Extension method to add identity-related configurations to the IServiceCollection
     public static IServiceCollection AddApplicationIdentity(this IServiceCollection services, IConfiguration config)
     {
+        services.AddIdentityCore<AppUser>( opt => {
+            opt.Password.RequireNonAlphanumeric =false;
+        })
+        .AddRoles<AppRole>()
+        .AddRoleManager<RoleManager<AppRole>>()
+        .AddEntityFrameworkStores<DataContext>();
+        
         // Add JWT-based authentication to the service collection
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options =>
         {
@@ -34,6 +44,10 @@ public static class ApplicationIdentityExtensions
                 ValidateAudience = false,
             };
         });
+
+        services.AddAuthorizationBuilder()
+           .AddPolicy("RequireAdminRole", policy =>policy.RequireRole("Admin"))
+           .AddPolicy("ModeratePhotoRole", policy =>policy.RequireRole("Admin", "Moderator"));
 
         // Return the modified IServiceCollection for chaining
         return services;
