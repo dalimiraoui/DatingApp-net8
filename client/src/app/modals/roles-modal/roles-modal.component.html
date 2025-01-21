@@ -1,0 +1,45 @@
+<div class="modal-header">
+    <h4 class="modal-title pull-left">{{title}}</h4>
+    <button type="button" class="btn-close close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+      <span class="visually-hidden">&times;</span>
+    </button>
+  </div>
+  <div class="modal-body">
+    <ul>
+        @for (role of availableRoles; track $index) {
+            <div class="form-check" >
+                <input type="checkbox"
+                    class="form-check-input"
+                    [checked]="selectedRoles.includes(role)"
+                    value="role"
+                    (change)="updateChecked(role)"
+                    [disabled]="role === 'Admin' && username === 'admin'"
+                >
+                <label> {{role}}</label>
+            </div>
+
+        }
+
+    </ul>
+    <!-- <form #rolesForm="ngForm" id="rolesForm">
+        <div class="form-check" *ngFor="let role of roles">
+            <input type="checkbox"
+                class="form-check-input"
+                [checked]="role.checked"
+                value="role.name"
+                (change)="role.checked = !role.checked"
+                [disabled]="role.name === 'Admin' && user.username === 'admin'"
+            >
+            <label>{{role.name}}</label>
+        </div>
+    </form> -->
+  </div>
+  <div class="modal-footer">
+    <button
+       type="button"
+       class="btn btn-success"
+       [disabled]="selectedRoles.length===0"
+       (click)="onSelectRoles()"
+    >Submit</button>
+    <!-- <button type="button" class="btn btn-success" >Submit</button> -->
+  </div>
