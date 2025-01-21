@@ -3,6 +3,7 @@ using API.Data;
 using API.Helpers;
 using API.Interfaces;
 using API.Services;
+using API.SignalR;
 using Microsoft.EntityFrameworkCore;
 
 namespace API.Extensions;
@@ -32,6 +33,10 @@ public static class ApplicationServiceExtentions
         
         // Configures the CloudinarySettings object by binding its properties to the "cloudinarySetting" section in the appsettings.json configuration file
         services.Configure<CloudinarySetting>(config.GetSection("cloudinarySetting"));
+
+        services.AddSignalR();
+
+        services.AddSingleton<PresenceTracker>();
 
 
         services.AddCors();

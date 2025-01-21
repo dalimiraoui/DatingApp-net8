@@ -3,14 +3,14 @@
 
 <div class="card">
     <div class="card-body">
-        @if(messages().length === 0) {
+        @if(messageService.messageThread().length === 0) {
             <div>
                 No messages yet... say hi by using the message box below
             </div>
 
         }@else {
             <ul  class="chat">
-                @for (message of messages(); track message.id) {
+                @for (message of messageService.messageThread(); track message.id) {
                     <li>
                         <div>
                             <span class="chat-img float-right">

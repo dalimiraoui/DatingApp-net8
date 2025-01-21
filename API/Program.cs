@@ -2,6 +2,7 @@ using API.Data;
 using API.Entities;
 using API.Extensions;
 using API.Middleware;
+using API.SignalR;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,13 +41,16 @@ app.UseMiddleware<ExceptionMiddleware>();
 
 // configure http request pipilines
 app.UseCors(
-    x => x.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:4200", "https://localhost:4200")
+    x => x.AllowAnyHeader().AllowAnyMethod().AllowCredentials().WithOrigins("http://localhost:4200", "https://localhost:4200")
 );
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapHub<PresenceHub>("hubs/presence");
+app.MapHub<PresenceHub>("hubs/message");
 
 // Create a new scope for resolving services with a controlled lifetime.
 // This ensures that any scoped or transient services resolved in this block are properly disposed of when the scope ends.
