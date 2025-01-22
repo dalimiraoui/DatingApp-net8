@@ -1,10 +1,7 @@
-using System.Security.Claims;
-using API.DTOs;
 using API.Entities;
 using API.Extensions;
 using API.Helpers;
 using API.Interfaces;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -22,13 +19,17 @@ public class LikesController(ILikesRepository likesRepository) : BaseApiControll
         if (sourceUserId == targetUserId) return BadRequest("You can not like yourself");
 
         var existingLike = await likesRepository.GetUserLike(sourceUserId, targetUserId);
-        if (existingLike == null) {
-            var userLike = new UserLike {
+        if (existingLike == null)
+        {
+            var userLike = new UserLike
+            {
                 SourceUserId = sourceUserId,
                 TargetUserId = targetUserId
             };
             likesRepository.AddLike(userLike);
-        } else {
+        }
+        else
+        {
             likesRepository.DeleteLike(existingLike);
         }
 
@@ -40,10 +41,10 @@ public class LikesController(ILikesRepository likesRepository) : BaseApiControll
     [HttpGet("list")]
     public async Task<ActionResult<IEnumerable<int>>> GetCurrentUserLikeIds()
     {
-        return Ok( await likesRepository.GetCurrentUserLikeIds(User.GetUserId()));
+        return Ok(await likesRepository.GetCurrentUserLikeIds(User.GetUserId()));
     }
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<int>>> GetUserLikes([FromQuery]LikesParams likesParams)
+    public async Task<ActionResult<IEnumerable<int>>> GetUserLikes([FromQuery] LikesParams likesParams)
     {
         likesParams.UserId = User.GetUserId();
         var users = await likesRepository.GetUserLikes(likesParams);

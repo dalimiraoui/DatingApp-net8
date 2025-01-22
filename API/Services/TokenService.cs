@@ -1,4 +1,3 @@
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -14,7 +13,7 @@ public class TokenService(IConfiguration config, UserManager<AppUser> userManage
     public async Task<string> CreateToken(AppUser user)
     {
         var tokenKey = config["TokenKey"] ?? throw new Exception("Cannot acces tokenKey from appsettings");
-        if (tokenKey.Length < 64 ) throw new Exception("Your tokenkey needs to be longer");
+        if (tokenKey.Length < 64) throw new Exception("Your tokenkey needs to be longer");
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
 
         if (user.UserName == null) throw new Exception("No username for user");
@@ -23,12 +22,12 @@ public class TokenService(IConfiguration config, UserManager<AppUser> userManage
             new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
             new Claim(ClaimTypes.Name, user.UserName)
         };
-        
+
         var roles = await userManager.GetRolesAsync(user);
         claims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
         var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
-        var tokenDescription= new SecurityTokenDescriptor
+        var tokenDescription = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
             Expires = DateTime.UtcNow.AddDays(7),
@@ -36,7 +35,7 @@ public class TokenService(IConfiguration config, UserManager<AppUser> userManage
 
         };
 
-        var tokenHandler =  new JwtSecurityTokenHandler();
+        var tokenHandler = new JwtSecurityTokenHandler();
         var token = tokenHandler.CreateToken(tokenDescription);
         return tokenHandler.WriteToken(token);
     }

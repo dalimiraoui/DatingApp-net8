@@ -1,8 +1,6 @@
 using API.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage.Json;
 
 namespace API.SignalR;
 
@@ -23,9 +21,9 @@ public class PresenceHub(PresenceTracker tracker) : Hub
     {
         if (Context.User == null) throw new HubException("Cannot get current usernamr");
 
-        var isOffline= await tracker.UserDisconnected(Context.User.GetUsername(), Context.ConnectionId);
+        var isOffline = await tracker.UserDisconnected(Context.User.GetUsername(), Context.ConnectionId);
         if (isOffline) await Clients.Others.SendAsync("UserIsOffOnline", Context.User?.GetUsername());
-        
+
         await base.OnDisconnectedAsync(exception);
     }
 

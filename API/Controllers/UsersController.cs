@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using API.DTOs;
 using API.Entities;
 using API.Extensions;
@@ -17,36 +16,36 @@ public class UsersController(
     IPhotoService photoService
 ) : BaseApiController
 {
-    
+
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MemeberDTO>>> getAllUsers([FromQuery] UserParams userParams)
     {
         userParams.CurrentUsername = User.GetUsername();
-        var users= await userRepository.GetMembersAsync(userParams);
+        var users = await userRepository.GetMembersAsync(userParams);
         Response.AddPaginationHeader(users);
         return Ok(users);
     }
-    
+
     [HttpGet("{username}")]
-    public async Task<ActionResult<MemeberDTO>> getUserById(string  username)
+    public async Task<ActionResult<MemeberDTO>> getUserById(string username)
     {
-        var user= await userRepository.GetMemberAsync(username);
-        if (user == null) return  NotFound("User with username :"+username+" not found");
+        var user = await userRepository.GetMemberAsync(username);
+        if (user == null) return NotFound("User with username :" + username + " not found");
         return Ok(user);
     }
 
     [HttpPut]
-    public async Task<ActionResult> UpdateUser(MemberUpdateDTO  memberUpdateDTO)
+    public async Task<ActionResult> UpdateUser(MemberUpdateDTO memberUpdateDTO)
     {
         var username = User.GetUsername();
 
-        if(username == null) return BadRequest("No username found in token");
+        if (username == null) return BadRequest("No username found in token");
         var user = await userRepository.GetUserByUsername(username);
 
-        if(user ==null) return BadRequest("Could not found user");
-        
+        if (user == null) return BadRequest("Could not found user");
+
         mapper.Map(memberUpdateDTO, user);
-        
+
         if (await userRepository.SaveAllAsync()) return NoContent();
 
         return BadRequest("Failed to update the user");
@@ -62,18 +61,19 @@ public class UsersController(
 
         var result = await photoService.AddPhotoAsync(file);
         if (result.Error != null) return BadRequest(result.Error.Message);
-        var photo = new Photo {
+        var photo = new Photo
+        {
             Url = result.SecureUrl.AbsoluteUri,
             PublicId = result.PublicId,
 
         };
 
-        if (user.Photos.Count == 0) photo.IsMain =true;
+        if (user.Photos.Count == 0) photo.IsMain = true;
         user.Photos.Add(photo);
 
         if (await userRepository.SaveAllAsync()) return CreatedAtAction(
             nameof(getAllUsers),
-            new { username = user.UserName}, mapper.Map<PhotoDTO>(photo)
+            new { username = user.UserName }, mapper.Map<PhotoDTO>(photo)
         );
 
         return BadRequest("Problem adding photo");
@@ -108,10 +108,11 @@ public class UsersController(
 
         var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
 
-        if (photo == null || photo.IsMain ) return BadRequest("This photo can not be deleted");
-        
+        if (photo == null || photo.IsMain) return BadRequest("This photo can not be deleted");
+
         var publicId = photo.PublicId;
-        if (publicId !=null) {
+        if (publicId != null)
+        {
             var result = await photoService.DeletePhotoAsync(publicId);
             if (result.Error != null) return BadRequest(result.Error.Message);
         }

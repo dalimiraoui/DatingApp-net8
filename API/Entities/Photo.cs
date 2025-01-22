@@ -8,24 +8,14 @@ namespace API.Entities;
 public class Photo
 {
     public int Id { get; set; }
-
     public required string Url { get; set; }
-
     public bool IsMain { get; set; }
-
     public string? PublicId { get; set; }
-
     // Foreign key to associate the photo with a specific user (AppUser)
-    public int AppUserId {get; set;}
-
+    public int AppUserId { get; set; }
     // Navigation property representing the relationship between Photo and AppUser.
     // The `null!` operator indicates that this property must not be null at runtime.
     // It's initialized to `null!` here to satisfy the compiler, but it is expected
     // that this property will be populated (e.g., via Entity Framework during data retrieval).
-    public AppUser AppUser { get; set; } =null!;
-    
-    
-    
-    
-    
+    public AppUser AppUser { get; set; } = null!;
 }

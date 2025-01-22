@@ -1,4 +1,3 @@
-using System;
 using API.Entities;
 using API.Interfaces;
 using API.DTOs;
@@ -39,21 +38,21 @@ public class LikesRepository(DataContext context, IMapper mapper) : ILikesReposi
         var likes = context.Likes.AsQueryable();
 
         IQueryable query;
-        switch(likesParams.Predicate) 
+        switch (likesParams.Predicate)
         {
             case "liked":
-                query= likes
-                    .Where(x => x.SourceUserId ==likesParams.UserId)
+                query = likes
+                    .Where(x => x.SourceUserId == likesParams.UserId)
                     .Select(x => x.TargetUser);
-                    break;
+                break;
             case "likedBy":
-                query= likes
-                    .Where(x => x.TargetUserId ==likesParams.UserId)
+                query = likes
+                    .Where(x => x.TargetUserId == likesParams.UserId)
                     .Select(x => x.SourceUser);
                 break;
-            default :
+            default:
                 var LikeIds = await GetCurrentUserLikeIds(likesParams.UserId);
-                query= likes
+                query = likes
                     .Where(x => x.TargetUserId == likesParams.UserId && LikeIds.Contains(x.SourceUserId))
                     .Select(x => x.SourceUser);
                 break;
@@ -67,6 +66,6 @@ public class LikesRepository(DataContext context, IMapper mapper) : ILikesReposi
 
     public async Task<bool> SaveChangesAsync()
     {
-        return await context.SaveChangesAsync() >0 ;
+        return await context.SaveChangesAsync() > 0;
     }
 }

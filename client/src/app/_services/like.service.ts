@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable, signal } from '@angular/core';
-import { AccountService } from './account.service';
 import { environment } from '../../environments/environment';
 import { Member } from '../_models/member';
 import { setPaginatedResponse, setPaginationHeaders } from './paginationHelper';

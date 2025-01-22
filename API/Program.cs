@@ -66,12 +66,12 @@ try
     var context = services.GetRequiredService<DataContext>();
     var userManager = services.GetRequiredService<UserManager<AppUser>>();
     var roleManager = services.GetRequiredService<RoleManager<AppRole>>();
-    
+
     // Apply any pending EF Core migrations to the database.
     // This ensures the database schema matches the application's current data model.
     // Runs asynchronously to avoid blocking the main thread.
     await context.Database.MigrateAsync();
-    
+
     await context.Database.ExecuteSqlRawAsync("DELETE FROM [Connections]");
     // Seed the database with initial data (e.g., users, roles, or default values).
     // This is typically used to ensure the application starts with essential data.
@@ -81,7 +81,7 @@ catch (Exception ex)
 {
     // Resolve the logger service for the Program class to log errors.
     var logger = services.GetRequiredService<ILogger<Program>>();
-    
+
     // Log the exception that occurred during database migration or seeding.
     // Provides helpful information for debugging startup issues.
     logger.LogError(ex, "An error occurred during migration");

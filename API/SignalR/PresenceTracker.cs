@@ -1,27 +1,25 @@
-using API.Extensions;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.SignalR;
 
 namespace API.SignalR;
 
 [Authorize]
 public class PresenceTracker
 {
-    private static readonly  Dictionary<string, List<string>> OnlineUsers = [];
+    private static readonly Dictionary<string, List<string>> OnlineUsers = [];
 
     public Task<bool> UserConnected(string username, string connectedId)
     {
         var isOnline = false;
         lock (OnlineUsers)
         {
-            if (OnlineUsers.ContainsKey(username)) 
+            if (OnlineUsers.ContainsKey(username))
             {
                 OnlineUsers[username].Add(connectedId);
             }
-            else 
+            else
             {
                 OnlineUsers.Add(username, [connectedId]);
-                isOnline =true;
+                isOnline = true;
             }
             return Task.FromResult(isOnline);
         }
@@ -33,17 +31,18 @@ public class PresenceTracker
         var isOffline = false;
         lock (OnlineUsers)
         {
-            if (!OnlineUsers.ContainsKey(username)) 
+            if (!OnlineUsers.ContainsKey(username))
             {
                 return Task.FromResult(isOffline);
             }
-            else 
+            else
             {
                 OnlineUsers[username].Remove(connectedId);
 
-                if (OnlineUsers[username].Count == 0) {
+                if (OnlineUsers[username].Count == 0)
+                {
                     OnlineUsers.Remove(username);
-                    isOffline =true;
+                    isOffline = true;
                 }
             }
         }
@@ -56,17 +55,17 @@ public class PresenceTracker
         string[] onlineUsers;
         lock (OnlineUsers)
         {
-        onlineUsers = OnlineUsers.OrderBy(k => k.Key).Select(k => k.Key).ToArray();
+            onlineUsers = OnlineUsers.OrderBy(k => k.Key).Select(k => k.Key).ToArray();
         }
         return Task.FromResult(onlineUsers);
     }
 
-    public static Task<List<string>> GetConnectionsForUser(string  username)
+    public static Task<List<string>> GetConnectionsForUser(string username)
     {
         List<string> connectionIds;
         if (OnlineUsers.TryGetValue(username, out var connections))
         {
-            lock(connections)
+            lock (connections)
             {
                 connectionIds = connections.ToList();
                 // since 12 c# version we can write the instruction as below

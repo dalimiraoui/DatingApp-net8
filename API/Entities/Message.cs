@@ -1,6 +1,3 @@
-using System;
-using API.Extensions;
-
 namespace API.Entities;
 
 public class Message
@@ -16,10 +13,8 @@ public class Message
 
     // prop navigation
     public int SenderId { get; set; }
-    public AppUser Sender { get; set; } =null!;
+    public AppUser Sender { get; set; } = null!;
     public int RecipientId { get; set; }
-    public AppUser Recipient { get; set; }= null!;
-
-    
+    public AppUser Recipient { get; set; } = null!;
 
 }

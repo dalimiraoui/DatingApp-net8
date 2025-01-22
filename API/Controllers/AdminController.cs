@@ -1,10 +1,4 @@
-using System.Security.Claims;
-using API.DTOs;
 using API.Entities;
-using API.Extensions;
-using API.Helpers;
-using API.Interfaces;
-using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -15,22 +9,23 @@ namespace API.Controllers;
 [Authorize]
 public class AdminController(UserManager<AppUser> userManager) : BaseApiController
 {
-    
-    [Authorize(Policy ="RequireAdminRole")]
+
+    [Authorize(Policy = "RequireAdminRole")]
     [HttpGet("users-with-roles")]
-    public  async Task<ActionResult> GetUsersWithRoles()
+    public async Task<ActionResult> GetUsersWithRoles()
     {
         var users = await userManager.Users
               .OrderBy(x => x.UserName)
-              .Select(x => new 
-              { x.Id,
-                Username = x.UserName,
-                Roles = x.UserRoles.Select(r => r.Role.Name).ToList()
+              .Select(x => new
+              {
+                  x.Id,
+                  Username = x.UserName,
+                  Roles = x.UserRoles.Select(r => r.Role.Name).ToList()
               }).ToListAsync();
         return Ok(users);
     }
 
-    [Authorize(Policy ="RequireAdminRole")]
+    [Authorize(Policy = "RequireAdminRole")]
     [HttpPost("edit-roles/{username}")]
 
     public async Task<ActionResult> EditRoles(string username, string roles)
@@ -57,12 +52,12 @@ public class AdminController(UserManager<AppUser> userManager) : BaseApiControll
 
     }
 
-    
-    [Authorize(Policy ="ModeratePhotoRole")]
+
+    [Authorize(Policy = "ModeratePhotoRole")]
     [HttpGet("photos-to-moderate")]
-    public  ActionResult GetPhotosForModeration()
+    public ActionResult GetPhotosForModeration()
     {
         return Ok("Admin or moderators can see this");
     }
-    
+
 }
