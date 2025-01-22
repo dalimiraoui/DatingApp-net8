@@ -11,7 +11,7 @@ namespace API.Controllers;
 
 [Authorize]
 public class UsersController(
-    IUserRepository userRepository,
+    IUnitOfWork unitOfWork,
     IMapper mapper,
     IPhotoService photoService
 ) : BaseApiController
@@ -21,7 +21,7 @@ public class UsersController(
     public async Task<ActionResult<IEnumerable<MemeberDTO>>> getAllUsers([FromQuery] UserParams userParams)
     {
         userParams.CurrentUsername = User.GetUsername();
-        var users = await userRepository.GetMembersAsync(userParams);
+        var users = await unitOfWork.UserRepository.GetMembersAsync(userParams);
         Response.AddPaginationHeader(users);
         return Ok(users);
     }
@@ -29,7 +29,7 @@ public class UsersController(
     [HttpGet("{username}")]
     public async Task<ActionResult<MemeberDTO>> getUserById(string username)
     {
-        var user = await userRepository.GetMemberAsync(username);
+        var user = await unitOfWork.UserRepository.GetMemberAsync(username);
         if (user == null) return NotFound("User with username :" + username + " not found");
         return Ok(user);
     }
@@ -40,13 +40,13 @@ public class UsersController(
         var username = User.GetUsername();
 
         if (username == null) return BadRequest("No username found in token");
-        var user = await userRepository.GetUserByUsername(username);
+        var user = await unitOfWork.UserRepository.GetUserByUsername(username);
 
         if (user == null) return BadRequest("Could not found user");
 
         mapper.Map(memberUpdateDTO, user);
 
-        if (await userRepository.SaveAllAsync()) return NoContent();
+        if (await unitOfWork.Complete()) return NoContent();
 
         return BadRequest("Failed to update the user");
     }
@@ -56,7 +56,7 @@ public class UsersController(
     {
         var username = User.GetUsername();
 
-        var user = await userRepository.GetUserByUsername(username);
+        var user = await unitOfWork.UserRepository.GetUserByUsername(username);
         if (user == null) return BadRequest("Could not found user");
 
         var result = await photoService.AddPhotoAsync(file);
@@ -71,7 +71,7 @@ public class UsersController(
         if (user.Photos.Count == 0) photo.IsMain = true;
         user.Photos.Add(photo);
 
-        if (await userRepository.SaveAllAsync()) return CreatedAtAction(
+        if (await unitOfWork.Complete()) return CreatedAtAction(
             nameof(getAllUsers),
             new { username = user.UserName }, mapper.Map<PhotoDTO>(photo)
         );
@@ -83,7 +83,7 @@ public class UsersController(
     [HttpPut("set-main-photo/{photoId}")]
     public async Task<ActionResult<PhotoDTO>> SetMainPhoto(int photoId)
     {
-        var user = await userRepository.GetUserByUsername(User.GetUsername());
+        var user = await unitOfWork.UserRepository.GetUserByUsername(User.GetUsername());
         if (user == null) return BadRequest("Could not found user");
 
         var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
@@ -94,7 +94,7 @@ public class UsersController(
         if (currentMain != null) currentMain.IsMain = false;
         photo.IsMain = true;
 
-        if (await userRepository.SaveAllAsync()) return NoContent();
+        if (await unitOfWork.Complete()) return NoContent();
 
         return BadRequest("Failed to set main photo");
 
@@ -103,7 +103,7 @@ public class UsersController(
     [HttpDelete("delete-photo/{photoId:int}")]
     public async Task<ActionResult> DeletePhoto(int photoId)
     {
-        var user = await userRepository.GetUserByUsername(User.GetUsername());
+        var user = await unitOfWork.UserRepository.GetUserByUsername(User.GetUsername());
         if (user == null) return BadRequest("Could not found user");
 
         var photo = user.Photos.FirstOrDefault(x => x.Id == photoId);
@@ -118,7 +118,7 @@ public class UsersController(
         }
         user.Photos.Remove(photo);
 
-        if (await userRepository.SaveAllAsync()) return Ok();
+        if (await unitOfWork.Complete()) return Ok();
 
         return BadRequest("Problem deleting Photo from Db");
 

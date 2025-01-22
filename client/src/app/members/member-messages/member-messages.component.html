@@ -5,11 +5,16 @@
     <div class="card-body">
         @if(messageService.messageThread().length === 0) {
             <div>
-                No messages yet... say hi by using the message box below
+                No messages yet
             </div>
 
         }@else {
-            <ul  class="chat">
+            <ul 
+               class="chat"
+               #scrollMe
+               style="overflow: scroll; max-height: 500px; scroll-behavior: smooth;"
+
+            >
                 @for (message of messageService.messageThread(); track message.id) {
                     <li>
                         <div>

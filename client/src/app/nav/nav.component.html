@@ -26,7 +26,7 @@
             <img src="{{accountService.currentUser()?.photoUrl || './assets/user.png'}}">
             <a  dropdownToggle class="dropdown-toggle text-light text-decoration-none"> Welcome {{accountService.currentUser()?.knownAs| titlecase}}</a>
             <div *bsDropdownMenu class="dropdown-menu">
-                <a class="dropdown-item" routerLink ="/members/edit"> Edit profile</a>
+                <a class="dropdown-item" routerLink ="/member/edit"> Edit profile</a>
                 <div class="dropdown-divider"></div>
                 <a class="dropdown-item" (click)="logout()"> Logout</a>
             </div>
