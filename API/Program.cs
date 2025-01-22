@@ -50,7 +50,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.MapHub<PresenceHub>("hubs/presence");
-app.MapHub<PresenceHub>("hubs/message");
+app.MapHub<MessageHub>("hubs/message");
 
 // Create a new scope for resolving services with a controlled lifetime.
 // This ensures that any scoped or transient services resolved in this block are properly disposed of when the scope ends.
@@ -72,6 +72,7 @@ try
     // Runs asynchronously to avoid blocking the main thread.
     await context.Database.MigrateAsync();
     
+    await context.Database.ExecuteSqlRawAsync("DELETE FROM [Connections]");
     // Seed the database with initial data (e.g., users, roles, or default values).
     // This is typically used to ensure the application starts with essential data.
     await Seed.SeedUsers(userManager, roleManager);

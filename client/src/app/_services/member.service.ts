@@ -29,6 +29,7 @@ export class MemberService {
   resetUserPrams() {
     this.userParams.set(new UserParams(this.user))
   }
+
   getMembers() {
 
     const response = this.memberCache.get(Object.values(this.userParams()).join('-'))
@@ -42,13 +43,12 @@ export class MemberService {
     params = params.append('gender', this.userParams().gender)
     params = params.append('orderBy', this.userParams().orderBy)
     
-    
     this.http.get<Member[]>(this.baseUrl +'users', {observe : 'response', params}).subscribe({
       next : response => {
         setPaginatedResponse(response, this.paginatedResult)
         this.memberCache.set(Object.values(this.userParams()).join('-'), response)
       }
-    })
+    });
   }
 
   getMemberByUserName( username:string) {

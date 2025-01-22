@@ -22,8 +22,8 @@ export const routes: Routes = [
     canActivate:[authGuard],
     children: [
       { path: 'members', component: MemberListComponent, canActivate: [authGuard] },
-      { path: 'members/edit', component: MemberEditComponent, canDeactivate:[preventUnsavedChangesGuard] },
       { path: 'members/:username', component: MemberDetailsComponent, resolve: {member:memberDetailedResolver} },
+      { path: 'members/edit', component: MemberEditComponent, canDeactivate:[preventUnsavedChangesGuard] },
       { path: 'messages', component: MessagesComponent },
       { path: 'lists', component: ListsComponent },
       { path: 'admin', component: AdminPanelComponent, canActivate: [adminGuard] },
